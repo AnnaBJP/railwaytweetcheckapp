@@ -86,7 +86,7 @@ def index():
         except Exception as e:
             error = str(e)
 
-    return render_template('./index.html', tweets_data=tweets_data, error=error, today=end_date.strftime('%Y-%m-%d'), six_months_ago=start_date.strftime('%Y-%m-%d'))
+    return render_template('index.html', tweets_data=tweets_data, error=error, today=end_date.strftime('%Y-%m-%d'), six_months_ago=start_date.strftime('%Y-%m-%d'))
 @app.errorhandler(500)
 def handle_500(error):
     logger.error(f'Internal Server Error: {error}')
@@ -112,6 +112,9 @@ def download(format):
         as_attachment=True,
         download_name=f"{filename}.{format}"
     )
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "ok"})
 
 
 if __name__ == '__main__':
