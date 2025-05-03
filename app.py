@@ -9,8 +9,12 @@ from waybacktweets.api.request import WaybackTweets
 from waybacktweets.api.visualize import HTMLTweetsVisualizer    
 from waybacktweets.config import FIELD_OPTIONS, config
 import os
+import logging
 
 # Configure verbose mode
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 config.verbose = False
 
 app = Flask(__name__)
@@ -83,7 +87,10 @@ def index():
             error = str(e)
 
     return render_template('./index.html', tweets_data=tweets_data, error=error, today=end_date.strftime('%Y-%m-%d'), six_months_ago=start_date.strftime('%Y-%m-%d'))
-
+@app.errorhandler(500)
+def handle_500(error):
+    logger.error(f'Internal Server Error: {error}')
+    return jsonify({"error": "Internal Server Error"}), 500
 
 @app.route('/download/<format>', methods=['POST'])
 def download(format):
@@ -108,5 +115,5 @@ def download(format):
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 80))
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
