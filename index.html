@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wayback Tweets Search</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .loading img {
+            width: 50px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="mb-4">Wayback Tweets Search</h2>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" id="tweetForm">
+            <div class="mb-3">
+                <label for="username" class="form-label">Twitter Username (without @)</label>
+                <input type="text" class="form-control" id="username" name="username" pattern="^[A-Za-z0-9_]{1,15}$" title="Valid Twitter username (no @)" required>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="from_date" class="form-label">From Date</label>
+                    <input type="date" class="form-control" id="from_date" name="from_date" value="{{ six_months_ago }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="to_date" class="form-label">To Date</label>
+                    <input type="date" class="form-control" id="to_date" name="to_date" value="{{ today }}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="limit" class="form-label">Limit (optional)</label>
+                    <input type="text" class="form-control" id="limit" name="limit">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="offset" class="form-label">Offset (optional)</label>
+                    <input type="text" class="form-control" id="offset" name="offset">
+                </div>
+            </div>
+
+            <div class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" id="unique" name="unique">
+                <label class="form-check-label" for="unique">
+                    Only Unique Wayback URLs
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Search Tweets</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <p>Searching tweets...</p>
+            <img src="https://i.gifer.com/ZZ5H.gif" alt="loading">
+        </div>
+
+        {% if tweets_data %}
+        <hr class="my-4">
+        <h4>Found {{ tweets_data.count }} tweets</h4>
+
+        <div class="mb-3">
+            <form method="POST" action="/download/csv">
+                <input type="hidden" name="data" value="{{ tweets_data.csv }}">
+                <input type="hidden" name="filename" value="{{ tweets_data.filename }}">
+                <button class="btn btn-outline-success btn-sm">Download CSV</button>
+            </form>
+        </div>
+
+        <div class="mb-3">
+            <form method="POST" action="/download/json">
+                <input type="hidden" name="data" value="{{ tweets_data.json }}">
+                <input type="hidden" name="filename" value="{{ tweets_data.filename }}">
+                <button class="btn btn-outline-secondary btn-sm">Download JSON</button>
+            </form>
+        </div>
+
+        <div class="mb-3">
+            <form method="POST" action="/download/html">
+                <input type="hidden" name="data" value="{{ tweets_data.html }}">
+                <input type="hidden" name="filename" value="{{ tweets_data.filename }}">
+                <button class="btn btn-outline-info btn-sm">Download HTML</button>
+            </form>
+        </div>
+
+        <div class="table-responsive mt-4">
+            {{ tweets_data.table|safe }}
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        const form = document.getElementById('tweetForm');
+        const loading = document.getElementById('loading');
+
+        form.addEventListener('submit', function () {
+            loading.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
