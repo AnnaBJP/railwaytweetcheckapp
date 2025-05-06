@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 config.verbose = False
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 50 MB
 # Default date range
 start_date = datetime.now() - timedelta(days=30 * 6)
 end_date = datetime.now()
