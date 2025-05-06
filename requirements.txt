@@ -29,5 +29,3 @@ isort==5.13.2
 pre-commit==3.7.1
 flake8-pyproject==1.2.3
 
-# Use latest from GitHub, requires Python 3.11+
-waybacktweets @ git+https://github.com/claromes/waybacktweets.git
